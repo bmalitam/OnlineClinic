@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "158184154228",
+    "firebase_url": "https://doconline-57119-default-rtdb.firebaseio.com",
+    "project_id": "doconline-57119",
+    "storage_bucket": "doconline-57119.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:158184154228:android:ad62c9f1e5cee254e25d21",
+        "android_client_info": {
+          "package_name": "com.tusi.OnlineDoc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "158184154228-4qglstntq1t6s4b9na71b0h6bmp3uiha.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tusi.OnlineDoc",
+            "certificate_hash": "a4cec6d38315189d93b20f94e6b2a82780aa2fa1"
+          }
+        },
+        {
+          "client_id": "158184154228-ve9vhqhuekhn6c8ebh20vv5kcpfc6kgv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRQE3EXir8dzB1Kn9udtCHJHj42Nte-VM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "158184154228-ve9vhqhuekhn6c8ebh20vv5kcpfc6kgv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

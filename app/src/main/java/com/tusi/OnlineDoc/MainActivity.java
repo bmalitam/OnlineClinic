@@ -30,6 +30,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.RemoteViews;
+import android.widget.Switch;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -52,12 +55,14 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tusi.OnlineDoc.databinding.ActivityMainBinding;
+import com.tusi.OnlineDoc.DataLists.*;
+
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
-    public static final String MESSAGES_CHILD = "messages";
+    public static final String MESSAGES_CHILD = "Database/Patient/Patient_1/Clinic_Followed";
     public static final int DEFAULT_MSG_LENGTH_LIMIT = 10;
     public static final String ANONYMOUS = "anonymous";
 
@@ -75,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseDatabase mDatabase;
-    private FirebaseRecyclerAdapter<FriendlyMessage, MessageViewHolder> mFirebaseAdapter;
+    private FirebaseRecyclerAdapter<ClinicFollowedList, MessageViewHolder> mFirebaseAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +90,10 @@ public class MainActivity extends AppCompatActivity {
         // See: https://developer.android.com/topic/libraries/view-binding
         mBinding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
+        TextView UserTypeView;
+        TextView UserNameView;
+        UserNameView = (TextView) findViewById(R.id.username);
+        UserTypeView = (TextView) findViewById(R.id.usertype);
 
 
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -96,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        startActivity(new Intent(this, AddDetailsActivity.class));
+      //  startActivity(new Intent(this, AddDetailsActivity.class));
 
 
 
@@ -118,22 +127,24 @@ public class MainActivity extends AppCompatActivity {
 
         // The FirebaseRecyclerAdapter class comes from the FirebaseUI library
         // See: https://github.com/firebase/FirebaseUI-Android
-        FirebaseRecyclerOptions<FriendlyMessage> options =
-                new FirebaseRecyclerOptions.Builder<FriendlyMessage>()
-                        .setQuery(messagesRef, FriendlyMessage.class)
+        FirebaseRecyclerOptions<ClinicFollowedList> options =
+                new FirebaseRecyclerOptions.Builder<ClinicFollowedList>()
+                        .setQuery(messagesRef, ClinicFollowedList.class)
                         .build();
 
-        mFirebaseAdapter = new FirebaseRecyclerAdapter<FriendlyMessage, MessageViewHolder>(options) {
+        mFirebaseAdapter = new FirebaseRecyclerAdapter<ClinicFollowedList, MessageViewHolder>(options) {
             @Override
             public MessageViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
                 LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-                return new MessageViewHolder(inflater.inflate(R.layout.item_message, viewGroup, false));
+                return new MessageViewHolder(inflater.inflate(R.layout.item_message_clinicview, viewGroup, false));
             }
 
             @Override
-            protected void onBindViewHolder(MessageViewHolder vh, int position, FriendlyMessage message) {
+            protected void onBindViewHolder(MessageViewHolder vh, int position, ClinicFollowedList message) {
                 mBinding.progressBar.setVisibility(ProgressBar.INVISIBLE);
                 vh.bindMessage(message);
+                UserNameView.setText(getUserName());
+                UserTypeView.setText(getUserType());
             }
         };
 
@@ -169,18 +180,15 @@ public class MainActivity extends AppCompatActivity {
         // Disable the send button when there's no text in the input field
         // See MyButtonObserver.java for details
         mBinding.messageEditText.addTextChangedListener(new MyButtonObserver(mBinding.sendButton));
-
+//        String user_type = getIntent().getStringExtra("USER_TYPE");
         // When the send button is clicked, send a text message
         mBinding.sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FriendlyMessage friendlyMessage = new
-                        FriendlyMessage(mBinding.messageEditText.getText().toString(),
-                        getUserName(),
-                        getUserPhotoUrl(),
-                        null /* no image */);
+                ClinicFollowedList clinicfollowedList = new
+                        ClinicFollowedList(mBinding.messageEditText.getText().toString(), getUserName());
 
-                mDatabase.getReference().child(MESSAGES_CHILD).push().setValue(friendlyMessage);
+                mDatabase.getReference().child(MESSAGES_CHILD).setValue(clinicfollowedList);
                 mBinding.messageEditText.setText("");
             }
         });
@@ -210,8 +218,7 @@ public class MainActivity extends AppCompatActivity {
                 FriendlyMessage tempMessage = new FriendlyMessage(
                         null, getUserName(), getUserPhotoUrl(), LOADING_IMAGE_URL);
 
-                mDatabase.getReference().child(MESSAGES_CHILD).push()
-                        .setValue(tempMessage, new DatabaseReference.CompletionListener() {
+                mDatabase.getReference().child(MESSAGES_CHILD).setValue(tempMessage, new DatabaseReference.CompletionListener() {
                             @Override
                             public void onComplete(DatabaseError databaseError,
                                                    DatabaseReference databaseReference) {
@@ -243,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         // After the image loads, get a public downloadUrl for the image
-                        // and add it to the message.
+                        // and Fadd it to the message.
                         taskSnapshot.getMetadata().getReference().getDownloadUrl()
                                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
                                     @Override
@@ -334,5 +341,13 @@ public class MainActivity extends AppCompatActivity {
         return ANONYMOUS;
     }
 
+    private String getUserType() {
+        String usertypevariable = ((ApplicationVariable) this.getApplication()).getUserTypeVariable();
+        if (usertypevariable != null) {
+            return usertypevariable;
+        }
+
+        return ANONYMOUS;
+    }
 
 }

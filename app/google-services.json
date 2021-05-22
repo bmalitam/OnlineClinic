@@ -8,18 +8,18 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:158184154228:android:ad62c9f1e5cee254e25d21",
+        "mobilesdk_app_id": "1:158184154228:android:e2e33963f3b7fb6ee25d21",
         "android_client_info": {
           "package_name": "com.tusi.OnlineDoc"
         }
       },
       "oauth_client": [
         {
-          "client_id": "158184154228-4qglstntq1t6s4b9na71b0h6bmp3uiha.apps.googleusercontent.com",
+          "client_id": "158184154228-9ecqm4jok3vukq07usk8emask52u0re6.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.tusi.OnlineDoc",
-            "certificate_hash": "a4cec6d38315189d93b20f94e6b2a82780aa2fa1"
+            "certificate_hash": "b350c0b12a3db7dfcd8d3b564adcd9e4a9ab2d70"
           }
         },
         {

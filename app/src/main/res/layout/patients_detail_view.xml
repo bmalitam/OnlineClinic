@@ -7,10 +7,10 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/ClinicDetail"
+        android:id="@+id/PatientDetail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Clinic Details"
+        android:text="Patient Details"
         android:textSize="36sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -19,7 +19,7 @@
         app:layout_constraintVertical_bias="0.041" />
 
     <ScrollView
-        android:id="@+id/scrollView_clinic_detail"
+        android:id="@+id/scrollView_patient_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -36,10 +36,10 @@
             android:paddingBottom="20dp">
 
             <TextView
-                android:id="@+id/ClinicName"
+                android:id="@+id/PatientName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Policlinic University"
+                android:text="James Jeffry"
                 android:textSize="24sp" />
 
             <LinearLayout
@@ -49,14 +49,14 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/Reg_ID"
+                    android:id="@+id/Patient_Contact"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Clinic Registration ID: "
+                    android:text="Contact Number: "
                     android:textSize="18sp" />
 
                 <TextView
-                    android:id="@+id/Answer_ClinicRegistrationNumber"
+                    android:id="@+id/Answer_Patient_Contact"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -64,42 +64,7 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/Clinic_Contact_Container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/ClinicContact"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Contact :"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/Clinic_Contactnumber"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="xxxxxxxxx" />
-
-            </LinearLayout>
-
         </LinearLayout>
     </ScrollView>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.92"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scrollView2"
-        app:layout_constraintVertical_bias="0.94"
-        app:srcCompat="@drawable/ic_add_black_24dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

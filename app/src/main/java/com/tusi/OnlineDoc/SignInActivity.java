@@ -19,6 +19,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -35,8 +37,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.tusi.OnlineDoc.databinding.ActivityMainBinding;
 import com.tusi.OnlineDoc.databinding.ActivitySignInBinding;
 
 public class SignInActivity extends AppCompatActivity {
@@ -44,6 +46,8 @@ public class SignInActivity extends AppCompatActivity {
     private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
 
+    Switch usertypeswitch;
+    String userTypevar;
     private ActivitySignInBinding mBinding;
     private GoogleSignInClient mSignInClient;
 
@@ -53,16 +57,27 @@ public class SignInActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+
         // This codelab uses View Binding
         // See: https://developer.android.com/topic/libraries/view-binding
         mBinding = ActivitySignInBinding.inflate(getLayoutInflater());
+        usertypeswitch = (Switch) mBinding.usertypeswitch;
+
+
+//        Intent intent = new Intent(getBaseContext(), SignInActivity.class);
+//        intent.putExtra("USER_TYPE", userTypevar);
+//        startActivity(intent);
+
         setContentView(mBinding.getRoot());
         mFirebaseAuth = FirebaseAuth.getInstance();
         // Set click listeners
         mBinding.signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 signIn();
+
             }
         });
 
@@ -79,7 +94,8 @@ public class SignInActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        String userTypevar = new setUserType().checkUserTypeSwitch(usertypeswitch);
+        ((ApplicationVariable) this.getApplication()).setUserTypeVariable(userTypevar);
         // Result returned from launching the Intent in signIn()
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);

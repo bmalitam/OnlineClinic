@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.tusi.OnlineDoc.DataLists.ClinicFollowedList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -28,47 +29,49 @@ public class MessageViewHolder extends RecyclerView.ViewHolder {
 
     public MessageViewHolder(View v) {
         super(v);
-        messageTextView = (TextView) itemView.findViewById(R.id.messageTextView);
-        messageImageView = (ImageView) itemView.findViewById(R.id.messageImageView);
-        messengerTextView = (TextView) itemView.findViewById(R.id.messengerTextView);
-        messengerImageView = (CircleImageView) itemView.findViewById(R.id.messengerImageView);
+        messageTextView = (TextView) itemView.findViewById(R.id.messageTextView3);
+//        messageImageView = (ImageView) itemView.findViewById(R.id.messageImageView);
+//        messengerTextView = (TextView) itemView.findViewById(R.id.messengerTextView);
+//        messengerImageView = (CircleImageView) itemView.findViewById(R.id.messengerImageView);
     }
 
-    public void bindMessage(FriendlyMessage friendlyMessage) {
-        if (friendlyMessage.getText() != null) {
-            messageTextView.setText(friendlyMessage.getText());
-            messageTextView.setVisibility(TextView.VISIBLE);
-            messageImageView.setVisibility(ImageView.GONE);
-        } else if (friendlyMessage.getImageUrl() != null) {
-            String imageUrl = friendlyMessage.getImageUrl();
-            if (imageUrl.startsWith("gs://")) {
-                StorageReference storageReference = FirebaseStorage.getInstance()
-                        .getReferenceFromUrl(imageUrl);
+    public void bindMessage(ClinicFollowedList friendlyMessage) {
+        if (friendlyMessage.getName() != null) {
+            messageTextView.setText(friendlyMessage.getName());
 
-                storageReference.getDownloadUrl()
-                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                String downloadUrl = uri.toString();
-                                Glide.with(messageImageView.getContext())
-                                        .load(downloadUrl)
-                                        .into(messageImageView);
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "Getting download url was not successful.", e);
-                            }
-                        });
-            } else {
-                Glide.with(messageImageView.getContext())
-                        .load(friendlyMessage.getImageUrl())
-                        .into(messageImageView);
-            }
-
-            messageImageView.setVisibility(ImageView.VISIBLE);
-            messageTextView.setVisibility(TextView.GONE);
-        }
+            messageTextView.setVisibility(TextView.VISIBLE);}
+           // messageImageView.setVisibility(ImageView.GONE);}
+//        } else if (friendlyMessage.getImageUrl() != null) {
+//            String imageUrl = friendlyMessage.getImageUrl();
+//            if (imageUrl.startsWith("gs://")) {
+//                StorageReference storageReference = FirebaseStorage.getInstance()
+//                        .getReferenceFromUrl(imageUrl);
+//
+//                storageReference.getDownloadUrl()
+//                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                            @Override
+//                            public void onSuccess(Uri uri) {
+//                                String downloadUrl = uri.toString();
+//                                Glide.with(messageImageView.getContext())
+//                                        .load(downloadUrl)
+//                                        .into(messageImageView);
+//                            }
+//                        })
+//                        .addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//                                Log.w(TAG, "Getting download url was not successful.", e);
+//                            }
+//                        });
+//            }
+//            else {
+////                Glide.with(messageImageView.getContext())
+////                        .load(friendlyMessage.getImageUrl())
+////                        .into(messageImageView);
+//            }
+//
+//            messageImageView.setVisibility(ImageView.VISIBLE);
+//            messageTextView.setVisibility(TextView.GONE);
+//        }
     }
 }

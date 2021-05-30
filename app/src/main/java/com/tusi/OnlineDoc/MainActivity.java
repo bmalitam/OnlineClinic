@@ -38,6 +38,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.viewpager.widget.ViewPager;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -46,6 +47,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
@@ -55,7 +57,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tusi.OnlineDoc.databinding.ActivityMainBinding;
+
 import com.tusi.OnlineDoc.DataLists.*;
+import com.tusi.OnlineDoc.ui.SectionsPagerAdapter;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -86,14 +90,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // This codelab uses View Binding
-        // See: https://developer.android.com/topic/libraries/view-binding
-        mBinding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(mBinding.getRoot());
-        TextView UserTypeView;
-        TextView UserNameView;
-        UserNameView = (TextView) findViewById(R.id.username);
-        UserTypeView = (TextView) findViewById(R.id.usertype);
 
 
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -104,198 +100,25 @@ public class MainActivity extends AppCompatActivity {
             finish();
             return;
         }
-
-      //  startActivity(new Intent(this, AddDetailsActivity.class));
-
-
-
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
         mSignInClient = GoogleSignIn.getClient(this, gso);
+        setContentView(R.layout.activity_main);
 
-        mLinearLayoutManager = new LinearLayoutManager(this);
-        mLinearLayoutManager.setStackFromEnd(true);
-        mBinding.messageRecyclerView.setLayoutManager(mLinearLayoutManager);
+        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), this);
+        ViewPager viewPager = findViewById(R.id.view_pager);
+        viewPager.setAdapter(sectionsPagerAdapter);
+        TabLayout tabs = findViewById(R.id.tabs);
+        tabs.setupWithViewPager(viewPager);
 
-        // Initialize Realtime Database
-        mDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference messagesRef = mDatabase.getReference().child(MESSAGES_CHILD);
 
-        // The FirebaseRecyclerAdapter class comes from the FirebaseUI library
-        // See: https://github.com/firebase/FirebaseUI-Android
-        FirebaseRecyclerOptions<ClinicFollowedList> options =
-                new FirebaseRecyclerOptions.Builder<ClinicFollowedList>()
-                        .setQuery(messagesRef, ClinicFollowedList.class)
-                        .build();
 
-        mFirebaseAdapter = new FirebaseRecyclerAdapter<ClinicFollowedList, MessageViewHolder>(options) {
-            @Override
-            public MessageViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-                LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-                return new MessageViewHolder(inflater.inflate(R.layout.item_message_clinicview, viewGroup, false));
-            }
-
-            @Override
-            protected void onBindViewHolder(MessageViewHolder vh, int position, ClinicFollowedList message) {
-                mBinding.progressBar.setVisibility(ProgressBar.INVISIBLE);
-                vh.bindMessage(message);
-                UserNameView.setText(getUserName());
-                UserTypeView.setText(getUserType());
-            }
-        };
-
-        mLinearLayoutManager = new LinearLayoutManager(this);
-        mLinearLayoutManager.setStackFromEnd(true);
-        mBinding.messageRecyclerView.setLayoutManager(mLinearLayoutManager);
-        mBinding.messageRecyclerView.setAdapter(mFirebaseAdapter);
-
-        // Scroll down when a new message arrives
-        // See MyScrollToBottomObserver.java for details
-        mFirebaseAdapter.registerAdapterDataObserver(
-                new MyScrollToBottomObserver(mBinding.messageRecyclerView, mFirebaseAdapter, mLinearLayoutManager));
-
-        mBinding.messageEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.toString().trim().length() > 0) {
-                    mBinding.sendButton.setEnabled(true);
-                } else {
-                    mBinding.sendButton.setEnabled(false);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-            }
-        });
-
-        // Disable the send button when there's no text in the input field
-        // See MyButtonObserver.java for details
-        mBinding.messageEditText.addTextChangedListener(new MyButtonObserver(mBinding.sendButton));
-//        String user_type = getIntent().getStringExtra("USER_TYPE");
-        // When the send button is clicked, send a text message
-        mBinding.sendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ClinicFollowedList clinicfollowedList = new
-                        ClinicFollowedList(mBinding.messageEditText.getText().toString(), getUserName());
-
-                mDatabase.getReference().child(MESSAGES_CHILD).setValue(clinicfollowedList);
-                mBinding.messageEditText.setText("");
-            }
-        });
-        // When the image button is clicked, launch the image picker
-        mBinding.addMessageImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setType("image/*");
-                startActivityForResult(intent, REQUEST_IMAGE);
-            }
-        });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
 
-        if (requestCode == REQUEST_IMAGE) {
-            if (resultCode == RESULT_OK && data != null) {
-                final Uri uri = data.getData();
-                Log.d(TAG, "Uri: " + uri.toString());
 
-                final FirebaseUser user = mFirebaseAuth.getCurrentUser();
-                FriendlyMessage tempMessage = new FriendlyMessage(
-                        null, getUserName(), getUserPhotoUrl(), LOADING_IMAGE_URL);
-
-                mDatabase.getReference().child(MESSAGES_CHILD).setValue(tempMessage, new DatabaseReference.CompletionListener() {
-                            @Override
-                            public void onComplete(DatabaseError databaseError,
-                                                   DatabaseReference databaseReference) {
-                                if (databaseError != null) {
-                                    Log.w(TAG, "Unable to write message to database.",
-                                            databaseError.toException());
-                                    return;
-                                }
-
-                                // Build a StorageReference and then upload the file
-                                String key = databaseReference.getKey();
-                                StorageReference storageReference =
-                                        FirebaseStorage.getInstance()
-                                                .getReference(user.getUid())
-                                                .child(key)
-                                                .child(uri.getLastPathSegment());
-
-                                putImageInStorage(storageReference, uri, key);
-                            }
-                        });
-            }
-        }
-    }
-
-    private void putImageInStorage(StorageReference storageReference, Uri uri, final String key) {
-        // First upload the image to Cloud Storage
-        storageReference.putFile(uri)
-                .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        // After the image loads, get a public downloadUrl for the image
-                        // and Fadd it to the message.
-                        taskSnapshot.getMetadata().getReference().getDownloadUrl()
-                                .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                    @Override
-                                    public void onSuccess(Uri uri) {
-                                        FriendlyMessage friendlyMessage = new FriendlyMessage(
-                                                null, getUserName(), getUserPhotoUrl(), uri.toString());
-                                        mDatabase.getReference()
-                                                .child(MESSAGES_CHILD)
-                                                .child(key)
-                                                .setValue(friendlyMessage);
-                                    }
-                                });
-                    }
-                })
-                .addOnFailureListener(this, new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Image upload task was not successful.", e);
-                    }
-                });
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in.
-        // TODO: Add code to check if user is signed in.
-    }
-
-    @Override
-    public void onPause() {
-        mFirebaseAdapter.stopListening();
-        super.onPause();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mFirebaseAdapter.startListening();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -322,32 +145,7 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    @Nullable
-    private String getUserPhotoUrl() {
-        FirebaseUser user = mFirebaseAuth.getCurrentUser();
-        if (user != null && user.getPhotoUrl() != null) {
-            return user.getPhotoUrl().toString();
-        }
 
-        return null;
-    }
 
-    private String getUserName() {
-        FirebaseUser user = mFirebaseAuth.getCurrentUser();
-        if (user != null) {
-            return user.getDisplayName();
-        }
-
-        return ANONYMOUS;
-    }
-
-    private String getUserType() {
-        String usertypevariable = ((ApplicationVariable) this.getApplication()).getUserTypeVariable();
-        if (usertypevariable != null) {
-            return usertypevariable;
-        }
-
-        return ANONYMOUS;
-    }
 
 }

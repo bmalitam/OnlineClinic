@@ -19,5 +19,7 @@
 
         <activity android:name=".SignInActivity" />
         <activity android:name=".AddDetailsActivity" />
+        <activity android:name=".ui.MainScreen" />
+        <activity android:name=".ui.ChoiceScreen" />
     </application>
 </manifest>

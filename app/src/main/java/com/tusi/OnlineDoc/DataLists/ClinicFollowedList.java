@@ -17,32 +17,51 @@ package com.tusi.OnlineDoc.DataLists;
 
 public class ClinicFollowedList {
 
+    private String Email;
+    private String Location;
     private String Name;
-    private String Contact;
+    private String RegistrationNumber;
 
 
     public ClinicFollowedList() {
     }
 
-    public ClinicFollowedList(String name, String contact) {
+    public ClinicFollowedList(String email, String location, String name, String registrationnumber) {
+        this.Email = email;
+        this.Location = location;
         this.Name = name;
-        this.Contact = contact;
+        this.RegistrationNumber = registrationnumber;
     }
 
-    public void setContact(String text) {
-        this.Contact = text;
+    public void setEmail(String email) {
+        this.Email = email;
     }
 
-    public String getContact() { return Contact; }
+    public String getEmail() {
+        return Email;
+    }
 
-    public String getName() {
-        return Name;
+    public void setLocation(String location) {
+        this.Location = location;
+    }
+
+    public String getLocation() {
+        return Location;
     }
 
     public void setName(String name) {
         this.Name = name;
     }
 
+    public String getName() {
+        return Name;
+    }
+
+    public void setRegistrationNumber(String registrationnumber) { this.RegistrationNumber = registrationnumber; }
+
+    public String getRegistrationNumber() {
+        return RegistrationNumber;
+    }
 
 
 }

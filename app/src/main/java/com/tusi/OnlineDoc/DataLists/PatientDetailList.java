@@ -19,17 +19,17 @@ public class PatientDetailList {
 
     private String Name;
     private String Contact;
-    private String Email;
+    private String Status;
 
 
 
     public PatientDetailList() {
     }
 
-    public PatientDetailList(String name, String contact, String email) {
+    public PatientDetailList(String name, String contact, String status) {
         this.Name = name;
         this.Contact = contact;
-        this.Email = email;
+        this.Status = status;
     }
 
     public void setContact(String text) {
@@ -46,12 +46,12 @@ public class PatientDetailList {
         this.Name = name;
     }
 
-    public String getEmail() {
-        return Email;
+    public String getStatus() {
+        return Status;
     }
 
-    public void setEmail(String email) {
-        this.Email = email;
+    public void setStatus(String status) {
+        this.Status = status;
     }
 
 

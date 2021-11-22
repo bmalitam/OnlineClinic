@@ -14,5 +14,11 @@
     <string name="main_screen">Main Screen</string>
     <string name="choice_screen">Choice Screen</string>
     <string name="view_screen">View Screen</string>
+    <string name="patient_profile">Patient Profile</string>
+    <string name="follow_clinic">Clinics to Choose</string>
+    <string name="my_conditions">Past Diagnosis</string>
+    <string name="clinic_profile">Clinic Profile</string>
+    <string name="patient_following_me">List of Patients</string>
+    <string name="clinic_followed">Clinic You Followed</string>
     <string name="banner_ad_unit_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
 </resources>

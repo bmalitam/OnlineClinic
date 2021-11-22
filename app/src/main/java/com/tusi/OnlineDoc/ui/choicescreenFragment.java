@@ -16,19 +16,27 @@
 package com.tusi.OnlineDoc.ui;
 
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.CalendarContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -36,9 +44,12 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.tusi.OnlineDoc.ApplicationVariable;
@@ -50,7 +61,9 @@ import com.tusi.OnlineDoc.DataLists.PatientFollowingList;
 import com.tusi.OnlineDoc.MessageViewHolder;
 import com.tusi.OnlineDoc.MyScrollToBottomObserver;
 import com.tusi.OnlineDoc.R;
+import com.tusi.OnlineDoc.SignInActivity;
 import com.tusi.OnlineDoc.databinding.ChoiceScreenBinding;
+import com.tusi.OnlineDoc.viewholder.usertype;
 
 import com.tusi.OnlineDoc.viewholder.*;
 
@@ -59,7 +72,7 @@ public class choicescreenFragment extends Fragment {
 
     private static final String TAG = "MainActivity";
 
-    public static String MESSAGES_CHILD = "Database/Patient/Patient_1/Clinic_Followed";
+    public static String MESSAGES_CHILD;
 
     public static final String ANONYMOUS = "anonymous";
 
@@ -71,13 +84,18 @@ public class choicescreenFragment extends Fragment {
     private FirebaseDatabase mDatabase;
     private FirebaseRecyclerAdapter<PatientFollowingList, choiceClinicScreenViewHolder> mClinicToViewAdapter;
     private FirebaseRecyclerAdapter<ClinicFollowedList, choiceScreenViewHolder> mPatientToViewAdapter;
+    private static String[] userType_ = {ANONYMOUS};
+    static usertype utpe;
+    MutableLiveData<String> usrtyp = new MutableLiveData<>();
+    String usr;
 
-    public static choicescreenFragment newInstance(int page, String title) {
+    public static choicescreenFragment newInstance(int page, String title, usertype userType) {
         choicescreenFragment fragment = new choicescreenFragment();
         Bundle bundle = new Bundle();
         bundle.putInt("someInt", page);
         bundle.putString("someTitle", title);
         fragment.setArguments(bundle);
+        utpe = userType;
         return fragment;
     }
 
@@ -85,6 +103,8 @@ public class choicescreenFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mBinding = ChoiceScreenBinding.inflate(getLayoutInflater());
+
+
         View view = mBinding.getRoot();
         return view;
     }
@@ -94,26 +114,28 @@ public class choicescreenFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // This codelab uses View Binding
-        // See: https://developer.android.com/topic/libraries/view-binding
-
         TextView UserTypeView;
         TextView UserNameView;
         UserNameView = (TextView) view.findViewById(R.id.usernameChoiceScreen);
         UserTypeView = (TextView) view.findViewById(R.id.usertypeChoiceScreen);
+        Button Follow = (Button) view.findViewById(R.id.EditButtonChoiceScreen);
+        mDatabase = FirebaseDatabase.getInstance();
+        mFirebaseAuth = FirebaseAuth.getInstance();
 
-        if (getUserType() =="Patient User")
+
+
+        if (utpe.getUser().contains("patient"))
         {
             MESSAGES_CHILD = "Database/Database_Clinic/Clinic";
 
         }
-        else if (getUserType() =="Clinic User")
+        else if (utpe.getUser().contains("clinic"))
         {
             MESSAGES_CHILD = "Database/Database_Patient/Patient";
         }
         else
         {
-             MESSAGES_CHILD = "Database/Database_Clinic/Clinic";
+            MESSAGES_CHILD = "Database/Database_Clinic/Clinic";
         }
 
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -129,8 +151,9 @@ public class choicescreenFragment extends Fragment {
         DatabaseReference messagesRef = mDatabase.getReference().child(MESSAGES_CHILD);
 
 
-        if (getUserType() =="Patient User")
+        if (utpe.getUser().contains("patient"))
         {
+
             FirebaseRecyclerOptions<ClinicFollowedList> options =
                     new FirebaseRecyclerOptions.Builder<ClinicFollowedList>()
                             .setQuery(messagesRef, ClinicFollowedList.class)
@@ -147,8 +170,20 @@ public class choicescreenFragment extends Fragment {
                 protected void onBindViewHolder(choiceScreenViewHolder vh, int position, ClinicFollowedList message) {
                     mBinding.progressBarChoiceScreen.setVisibility(ProgressBar.INVISIBLE);
                     vh.bindMessage(message);
+                    Follow.setOnClickListener(new View.OnClickListener(){
+                        @Override
+                        public void onClick(View v)
+                        {
+
+                            Toast.makeText(getActivity(), vh.getName(), Toast.LENGTH_SHORT).show();
+
+
+                        }
+                    });
                     UserNameView.setText(getUserName());
                     UserTypeView.setText(getUserType());
+
+
                 }
             };
 
@@ -157,13 +192,15 @@ public class choicescreenFragment extends Fragment {
             mBinding.messageRecyclerViewChoiceScreen.setLayoutManager(mLinearLayoutManager);
             mBinding.messageRecyclerViewChoiceScreen.setAdapter(mPatientToViewAdapter);
 
+
+
             // Scroll down when a new message arrives
             // See MyScrollToBottomObserver.java for details
             mPatientToViewAdapter.registerAdapterDataObserver(
                     new MyScrollToBottomObserver(mBinding.messageRecyclerViewChoiceScreen, mPatientToViewAdapter, mLinearLayoutManager));
 
         }
-        else if (getUserType() =="Clinic User")
+        else if (utpe.getUser().contains("clinic"))
         {
             FirebaseRecyclerOptions<PatientFollowingList> options =
                     new FirebaseRecyclerOptions.Builder<PatientFollowingList>()
@@ -309,12 +346,12 @@ public class choicescreenFragment extends Fragment {
 
     @Override
     public void onPause() {
-        if (getUserType() =="Patient User")
+        if (utpe.getUser().contains("patient"))
         {
             mPatientToViewAdapter.stopListening();
 
         }
-        else if (getUserType() =="Clinic User")
+        else if (utpe.getUser().contains("clinic"))
         {
             mClinicToViewAdapter.stopListening();
         }
@@ -329,12 +366,12 @@ public class choicescreenFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (getUserType() =="Patient User")
+        if (utpe.getUser().contains("patient"))
         {
             mPatientToViewAdapter.startListening();
 
         }
-        else if (getUserType() =="Clinic User")
+        else if (utpe.getUser().contains("clinic"))
         {
             mClinicToViewAdapter.startListening();
         }
@@ -394,12 +431,20 @@ public class choicescreenFragment extends Fragment {
     }
 
     private String getUserType() {
-        String usertypevariable = ((ApplicationVariable) this.getActivity().getApplication()).getUserTypeVariable();
-        if (usertypevariable != null) {
-            return usertypevariable;
+        if (utpe.getUser().contains("patient"))
+        {
+            return "Patient User";
+        }
+        else if (utpe.getUser().contains("clinic"))
+        {
+            return "Clinic User";
+        }
+        else
+        {
+            return ANONYMOUS;
         }
 
-        return ANONYMOUS;
+
     }
 
 }

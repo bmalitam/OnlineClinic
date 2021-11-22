@@ -23,31 +23,38 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.tusi.OnlineDoc.ApplicationVariable;
 import com.tusi.OnlineDoc.DataLists.ClinicFollowedList;
 import com.tusi.OnlineDoc.DataLists.PatientFollowingList;
+import com.tusi.OnlineDoc.DataLists.PatientMedicalHistoryList;
 import com.tusi.OnlineDoc.MyScrollToBottomObserver;
 import com.tusi.OnlineDoc.R;
 import com.tusi.OnlineDoc.databinding.ViewScreenBinding;
 import com.tusi.OnlineDoc.viewholder.*;
+import com.tusi.OnlineDoc.viewholder.usertype;
 
 
 public class viewscreenFragment extends Fragment {
 
     private static final String TAG = "MainActivity";
 
-    public static String MESSAGES_CHILD = "Database/Patient/Patient_1/Clinic_Followed";
+    public static String MESSAGES_CHILD;
 
     public static final String ANONYMOUS = "anonymous";
 
@@ -58,14 +65,18 @@ public class viewscreenFragment extends Fragment {
     private FirebaseAuth mFirebaseAuth;
     private FirebaseDatabase mDatabase;
     private FirebaseRecyclerAdapter<PatientFollowingList, viewClinicScreenViewHolder> mClinicToViewAdapter;
-    private FirebaseRecyclerAdapter<ClinicFollowedList, viewScreenViewHolder> mPatientToViewAdapter;
+    private FirebaseRecyclerAdapter<PatientMedicalHistoryList, medicalConditionViewHolder> mPatientToViewAdapter;
+    private static String[] userType_ = {ANONYMOUS};
+    static usertype utpe;
+    String usr;
 
-    public static viewscreenFragment newInstance(int page, String title) {
+    public static viewscreenFragment newInstance(int page, String title,usertype userType) {
         viewscreenFragment fragment = new viewscreenFragment();
         Bundle bundle = new Bundle();
         bundle.putInt("someInt", page);
         bundle.putString("someTitle", title);
         fragment.setArguments(bundle);
+        utpe = userType;
         return fragment;
     }
 
@@ -73,6 +84,10 @@ public class viewscreenFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mBinding = ViewScreenBinding.inflate(getLayoutInflater());
+        mDatabase = FirebaseDatabase.getInstance();
+        mFirebaseAuth = FirebaseAuth.getInstance();
+
+        mFirebaseAuth = FirebaseAuth.getInstance();
         View view = mBinding.getRoot();
         return view;
     }
@@ -89,19 +104,30 @@ public class viewscreenFragment extends Fragment {
         TextView UserNameView;
         UserNameView = (TextView) view.findViewById(R.id.usernameViewScreen);
         UserTypeView = (TextView) view.findViewById(R.id.usertypeViewScreen);
-
-        if (getUserType() =="Patient User")
+        usr = getUserName();
+//        mDatabase.getReference().child("Database").child("usrtype").child(usr).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DataSnapshot> task) {
+//                if (!task.isSuccessful()) {
+//                    //Todo: popup
+//                }
+//                else {
+//                    userType_[0] = String.valueOf(task.getResult().getValue());
+//                }
+//            }
+//        });
+        if (utpe.getUser().contains("patient"))
         {
-            MESSAGES_CHILD = "Database/Bradly Malitam/Details/Clinic_Followed";
+            MESSAGES_CHILD = "Database/"+usr+"/Details/"+"medical_history";
 
         }
-        else if (getUserType() =="Clinic User")
+        else if (utpe.getUser().contains("clinic"))
         {
-            MESSAGES_CHILD = "Database/PolyClinicUniversity/Details/Patient_Under";
+            MESSAGES_CHILD = "Database/"+usr+ "/Details"+"/Patient_Under";
         }
         else
         {
-             MESSAGES_CHILD = "Database/Bradly Malitam/Details/Clinic_Followed";
+            MESSAGES_CHILD = "Database/"+usr+"/Details/"+"medical_history";
         }
 
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -117,22 +143,33 @@ public class viewscreenFragment extends Fragment {
         DatabaseReference messagesRef = mDatabase.getReference().child(MESSAGES_CHILD);
 
 
-        if (getUserType() =="Patient User")
+        if (utpe.getUser().contains("patient"))
         {
-            FirebaseRecyclerOptions<ClinicFollowedList> options =
-                    new FirebaseRecyclerOptions.Builder<ClinicFollowedList>()
-                            .setQuery(messagesRef, ClinicFollowedList.class)
+            messagesRef.get().addOnCompleteListener(task -> {
+                if (task.getResult().getValue()==null) {
+                    mBinding.progressBarViewScreen.setVisibility(ProgressBar.INVISIBLE);
+                    Toast.makeText(getActivity(), "No Medical Issues Registered yet",
+                            Toast.LENGTH_SHORT).show();
+                    UserNameView.setText(getUserName());
+                    UserTypeView.setText(getUserType());
+
+                }
+
+            });
+            FirebaseRecyclerOptions<PatientMedicalHistoryList> options =
+                    new FirebaseRecyclerOptions.Builder<PatientMedicalHistoryList>()
+                            .setQuery(messagesRef, PatientMedicalHistoryList.class)
                             .build();
 
-            mPatientToViewAdapter = new FirebaseRecyclerAdapter<ClinicFollowedList, viewScreenViewHolder>(options) {
+            mPatientToViewAdapter = new FirebaseRecyclerAdapter<PatientMedicalHistoryList, medicalConditionViewHolder>(options) {
                 @Override
-                public viewScreenViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+                public medicalConditionViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
                     LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-                    return new viewScreenViewHolder(inflater.inflate(R.layout.item_message_clinicdetails_patientview, viewGroup, false));
+                    return new medicalConditionViewHolder(inflater.inflate(R.layout.item_message_patientmedicalhistory, viewGroup, false));
                 }
 
                 @Override
-                protected void onBindViewHolder(viewScreenViewHolder vh, int position, ClinicFollowedList message) {
+                protected void onBindViewHolder(medicalConditionViewHolder vh, int position, PatientMedicalHistoryList message) {
                     mBinding.progressBarViewScreen.setVisibility(ProgressBar.INVISIBLE);
                     vh.bindMessage(message);
                     UserNameView.setText(getUserName());
@@ -151,8 +188,19 @@ public class viewscreenFragment extends Fragment {
                     new MyScrollToBottomObserver(mBinding.messageRecyclerViewViewScreen, mPatientToViewAdapter, mLinearLayoutManager));
 
         }
-        else if (getUserType() =="Clinic User")
+        else if (utpe.getUser().contains("clinic"))
         {
+            messagesRef.get().addOnCompleteListener(task -> {
+                if (task.getResult().getValue()==null) {
+                    mBinding.progressBarViewScreen.setVisibility(ProgressBar.INVISIBLE);
+                    Toast.makeText(getActivity(), "No patient Following Clinic yet",
+                            Toast.LENGTH_SHORT).show();
+                    UserNameView.setText(getUserName());
+                    UserTypeView.setText(getUserType());
+
+                }
+
+            });
             FirebaseRecyclerOptions<PatientFollowingList> options =
                     new FirebaseRecyclerOptions.Builder<PatientFollowingList>()
                             .setQuery(messagesRef, PatientFollowingList.class)
@@ -186,20 +234,31 @@ public class viewscreenFragment extends Fragment {
         }
         else
         {
-            FirebaseRecyclerOptions<ClinicFollowedList> options =
-                    new FirebaseRecyclerOptions.Builder<ClinicFollowedList>()
-                            .setQuery(messagesRef, ClinicFollowedList.class)
+            messagesRef.get().addOnCompleteListener(task -> {
+                if (task.getResult().getValue()==null) {
+                    mBinding.progressBarViewScreen.setVisibility(ProgressBar.INVISIBLE);
+                    Toast.makeText(getActivity(), "No Medical Issues Registered yet",
+                            Toast.LENGTH_SHORT).show();
+                    UserNameView.setText(getUserName());
+                    UserTypeView.setText(getUserType());
+
+                }
+
+            });
+            FirebaseRecyclerOptions<PatientMedicalHistoryList> options =
+                    new FirebaseRecyclerOptions.Builder<PatientMedicalHistoryList>()
+                            .setQuery(messagesRef, PatientMedicalHistoryList.class)
                             .build();
 
-            mPatientToViewAdapter = new FirebaseRecyclerAdapter<ClinicFollowedList, viewScreenViewHolder>(options) {
+            mPatientToViewAdapter = new FirebaseRecyclerAdapter<PatientMedicalHistoryList, medicalConditionViewHolder>(options) {
                 @Override
-                public viewScreenViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+                public medicalConditionViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
                     LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-                    return new viewScreenViewHolder(inflater.inflate(R.layout.item_message_clinicdetails_patientview, viewGroup, false));
+                    return new medicalConditionViewHolder(inflater.inflate(R.layout.item_message_patientmedicalhistory, viewGroup, false));
                 }
 
                 @Override
-                protected void onBindViewHolder(viewScreenViewHolder vh, int position, ClinicFollowedList message) {
+                protected void onBindViewHolder(medicalConditionViewHolder vh, int position, PatientMedicalHistoryList message) {
                     mBinding.progressBarViewScreen.setVisibility(ProgressBar.INVISIBLE);
                     vh.bindMessage(message);
                     UserNameView.setText(getUserName());
@@ -298,12 +357,12 @@ public class viewscreenFragment extends Fragment {
 
     @Override
     public void onPause() {
-        if (getUserType() =="Patient User")
+        if (utpe.getUser().contains("patient"))
         {
             mPatientToViewAdapter.stopListening();
 
         }
-        else if (getUserType() =="Clinic User")
+        else if (utpe.getUser().contains("clinic"))
         {
             mClinicToViewAdapter.stopListening();
         }
@@ -318,12 +377,12 @@ public class viewscreenFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (getUserType() =="Patient User")
+        if (utpe.getUser().contains("patient"))
         {
             mPatientToViewAdapter.startListening();
 
         }
-        else if (getUserType() =="Clinic User")
+        else if (utpe.getUser().contains("clinic"))
         {
             mClinicToViewAdapter.startListening();
         }
@@ -383,12 +442,19 @@ public class viewscreenFragment extends Fragment {
     }
 
     private String getUserType() {
-        String usertypevariable = ((ApplicationVariable) this.getActivity().getApplication()).getUserTypeVariable();
-        if (usertypevariable != null) {
-            return usertypevariable;
+        if (utpe.getUser().contains("patient"))
+        {
+            return "Patient User";
+        }
+        else if (utpe.getUser().contains("clinic"))
+        {
+            return "Clinic User";
+        }
+        else
+        {
+            return ANONYMOUS;
         }
 
-        return ANONYMOUS;
     }
 
 }

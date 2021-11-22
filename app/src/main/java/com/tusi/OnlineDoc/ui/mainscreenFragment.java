@@ -21,6 +21,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 
 import android.view.View;
@@ -30,14 +31,18 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.tusi.OnlineDoc.ApplicationVariable;
@@ -49,15 +54,17 @@ import com.tusi.OnlineDoc.MyScrollToBottomObserver;
 import com.tusi.OnlineDoc.R;
 import com.tusi.OnlineDoc.databinding.MainScreenBinding;
 import com.tusi.OnlineDoc.viewholder.*;
+import com.tusi.OnlineDoc.viewholder.usertype;
 
 
 public class mainscreenFragment extends Fragment {
 
     private static final String TAG = "MainScreenFragment";
 
-    public static String MESSAGES_CHILD = "Database/Patient/Patient_1/Clinic_Followed";
+    public static String MESSAGES_CHILD;
 
     public static final String ANONYMOUS = "anonymous";
+
 
 
     private MainScreenBinding mBinding;
@@ -67,14 +74,18 @@ public class mainscreenFragment extends Fragment {
     private FirebaseDatabase mDatabase;
     private FirebaseRecyclerAdapter<PatientDetailList, mainScreenViewHolder> mPatientDetailsAdapter;
     private FirebaseRecyclerAdapter<ClinicDetailsList, mainClinicScreenViewHolder> mClinicDetailsAdapter;
+    private static String[] userType_ = {ANONYMOUS};
+    static usertype utpe;
+    String usr;
 
 
-    public static mainscreenFragment newInstance(int page, String title) {
+    public static mainscreenFragment newInstance(int page, String title,usertype userType) {
         mainscreenFragment fragment = new mainscreenFragment();
         Bundle bundle = new Bundle();
         bundle.putInt("someInt", page);
         bundle.putString("someTitle", title);
         fragment.setArguments(bundle);
+        utpe = userType;
         return fragment;
     }
 
@@ -83,6 +94,9 @@ public class mainscreenFragment extends Fragment {
                              Bundle savedInstanceState) {
         mBinding = MainScreenBinding.inflate(getLayoutInflater());
         View view = mBinding.getRoot();
+        mDatabase = FirebaseDatabase.getInstance();
+        mFirebaseAuth = FirebaseAuth.getInstance();
+
         return view;
     }
 
@@ -94,19 +108,39 @@ public class mainscreenFragment extends Fragment {
         TextView UserNameView;
         UserNameView = (TextView) view.findViewById(R.id.username);
         UserTypeView = (TextView) view.findViewById(R.id.usertype);
-
-        if (getUserType() =="Patient User")
+        usr = getUserName();
+        if (usr == "TUSI Solution")
         {
-            MESSAGES_CHILD = "Database/Bradly Malitam";
-
-        }
-        else if (getUserType() =="Clinic User")
-        {
-            MESSAGES_CHILD = "Database/PolyClinicUniversity";
+            Log.i("usr", usr);
         }
         else
         {
-            MESSAGES_CHILD = "Database/Bradly Malitam";
+            Log.i("usr", "failed");}
+
+//        mDatabase.getReference().child("Database").child("usr").child("TUSi Solution").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DataSnapshot> task) {
+//                if (!task.isSuccessful()) {
+//                    //Todo: popup
+//                }
+//                else {
+//                    utpe.setUser(String.valueOf(task.getResult().getValue()));
+//                }
+//            }
+//        });
+
+        if (utpe.getUser().contains("patient"))
+        {
+            MESSAGES_CHILD = "Database/"+usr;
+
+        }
+        else if (utpe.getUser().contains("clinic"))
+        {
+            MESSAGES_CHILD = "Database/"+usr;
+        }
+        else
+        {
+            MESSAGES_CHILD = "Database/"+usr;
         }
 
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -121,7 +155,7 @@ public class mainscreenFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance();
         DatabaseReference messagesRef = mDatabase.getReference().child(MESSAGES_CHILD);
 
-        if (getUserType() =="Patient User")
+        if (utpe.getUser().contains("patient"))
         {
             FirebaseRecyclerOptions<PatientDetailList> options =
                     new FirebaseRecyclerOptions.Builder<PatientDetailList>()
@@ -155,7 +189,7 @@ public class mainscreenFragment extends Fragment {
                     new MyScrollToBottomObserver(mBinding.messageRecyclerView, mPatientDetailsAdapter, mLinearLayoutManager));
 
         }
-        else if (getUserType() =="Clinic User")
+        else if (utpe.getUser().contains("clinic"))
         {
             FirebaseRecyclerOptions<ClinicDetailsList> options =
                     new FirebaseRecyclerOptions.Builder<ClinicDetailsList>()
@@ -220,6 +254,7 @@ public class mainscreenFragment extends Fragment {
             mPatientDetailsAdapter.registerAdapterDataObserver(
                     new MyScrollToBottomObserver(mBinding.messageRecyclerView, mPatientDetailsAdapter, mLinearLayoutManager));
         }
+
     }
 
 //    @Override
@@ -300,12 +335,12 @@ public class mainscreenFragment extends Fragment {
 
     @Override
     public void onPause() {
-        if (getUserType() =="Patient User")
+        if (utpe.getUser().contains("patient"))
         {
             mPatientDetailsAdapter.stopListening();
 
         }
-        else if (getUserType() =="Clinic User")
+        else if (utpe.getUser().contains("clinic"))
         {
             mClinicDetailsAdapter.stopListening();
         }
@@ -320,12 +355,12 @@ public class mainscreenFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (getUserType() =="Patient User")
+        if (utpe.getUser().contains("patient"))
         {
             mPatientDetailsAdapter.startListening();
 
         }
-        else if (getUserType() =="Clinic User")
+        else if (utpe.getUser().contains("clinic"))
         {
             mClinicDetailsAdapter.startListening();
         }
@@ -386,12 +421,19 @@ public class mainscreenFragment extends Fragment {
     }
 
     private String getUserType() {
-        String usertypevariable = ((ApplicationVariable) this.getActivity().getApplication()).getUserTypeVariable();
-        if (usertypevariable != null) {
-            return usertypevariable;
+        if (utpe.getUser().contains("patient"))
+        {
+            return "Patient User";
+        }
+        else if (utpe.getUser().contains("clinic"))
+        {
+            return "Clinic User";
+        }
+        else
+        {
+            return ANONYMOUS;
         }
 
-        return ANONYMOUS;
     }
 
 }

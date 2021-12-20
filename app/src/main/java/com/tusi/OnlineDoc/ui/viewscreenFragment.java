@@ -16,8 +16,10 @@
 package com.tusi.OnlineDoc.ui;
 
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +60,12 @@ public class viewscreenFragment extends Fragment {
 
     public static final String ANONYMOUS = "anonymous";
 
-
+    String emailtobook;
+    String emailtobookprev;
+    String regnum;
+    String location;
+    String names;
+    boolean followflag = false;
     private ViewScreenBinding mBinding;
     private LinearLayoutManager mLinearLayoutManager;
     private SharedPreferences mSharedPreferences;
@@ -123,7 +130,7 @@ public class viewscreenFragment extends Fragment {
         }
         else if (utpe.getUser().contains("clinic"))
         {
-            MESSAGES_CHILD = "Database/"+usr+ "/Details"+"/Patient_Under";
+            MESSAGES_CHILD = "Database/"+usr+ "/Details"+"/patientUnder";
         }
         else
         {
@@ -215,11 +222,40 @@ public class viewscreenFragment extends Fragment {
                 }
 
                 @Override
-                protected void onBindViewHolder(viewClinicScreenViewHolder vh, int position, PatientFollowingList message) {
+                protected void onBindViewHolder(viewClinicScreenViewHolder vh, @SuppressLint("RecyclerView") int position, PatientFollowingList message) {
                     mBinding.progressBarViewScreen.setVisibility(ProgressBar.INVISIBLE);
                     vh.bindMessage(message);
                     UserNameView.setText(getUserName());
                     UserTypeView.setText(getUserType());
+                    vh.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            clickaction(vh,mClinicToViewAdapter,position);
+
+                        }
+
+
+
+                    });
+                    vh.patientName.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            clickaction(vh,mClinicToViewAdapter,position);
+                        }
+
+
+
+                    });
+                    vh.patientContact.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            clickaction(vh,mClinicToViewAdapter,position);
+                        }
+
+
+
+                    });
+
                 }
             };
             mLinearLayoutManager = new LinearLayoutManager(getContext());
@@ -279,75 +315,25 @@ public class viewscreenFragment extends Fragment {
 
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        Log.d(TAG, "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
-//
-//        if (requestCode == REQUEST_IMAGE) {
-//            if (resultCode == RESULT_OK && data != null) {
-//                final Uri uri = data.getData();
-//                Log.d(TAG, "Uri: " + uri.toString());
-//
-//                final FirebaseUser user = mFirebaseAuth.getCurrentUser();
-//                FriendlyMessage tempMessage = new FriendlyMessage(
-//                        null, getUserName(), getUserPhotoUrl(), LOADING_IMAGE_URL);
-//
-//                mDatabase.getReference().child(MESSAGES_CHILD).setValue(tempMessage, new DatabaseReference.CompletionListener() {
-//                            @Override
-//                            public void onComplete(DatabaseError databaseError,
-//                                                   DatabaseReference databaseReference) {
-//                                if (databaseError != null) {
-//                                    Log.w(TAG, "Unable to write message to database.",
-//                                            databaseError.toException());
-//                                    return;
-//                                }
-//
-//                                // Build a StorageReference and then upload the file
-//                                String key = databaseReference.getKey();
-//                                StorageReference storageReference =
-//                                        FirebaseStorage.getInstance()
-//                                                .getReference(user.getUid())
-//                                                .child(key)
-//                                                .child(uri.getLastPathSegment());
-//
-//                                putImageInStorage(storageReference, uri, key);
-//                            }
-//                        });
-//            }
-//        }
-//    }
-//
-//    private void putImageInStorage(StorageReference storageReference, Uri uri, final String key) {
-//        // First upload the image to Cloud Storage
-//        storageReference.putFile(uri)
-//                .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                    @Override
-//                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                        // After the image loads, get a public downloadUrl for the image
-//                        // and Fadd it to the message.
-//                        taskSnapshot.getMetadata().getReference().getDownloadUrl()
-//                                .addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                                    @Override
-//                                    public void onSuccess(Uri uri) {
-//                                        FriendlyMessage friendlyMessage = new FriendlyMessage(
-//                                                null, getUserName(), getUserPhotoUrl(), uri.toString());
-//                                        mDatabase.getReference()
-//                                                .child(MESSAGES_CHILD)
-//                                                .child(key)
-//                                                .setValue(friendlyMessage);
-//                                    }
-//                                });
-//                    }
-//                })
-//                .addOnFailureListener(this, new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        Log.w(TAG, "Image upload task was not successful.", e);
-//                    }
-//                });
-//    }
+    void clickaction(viewClinicScreenViewHolder vh, FirebaseRecyclerAdapter<PatientFollowingList, viewClinicScreenViewHolder> mClinicToViewAdapter, int position)
+    {
+        emailtobook = mClinicToViewAdapter.getItem(position).getContact();
+        if (emailtobook!=emailtobookprev)
+        {   followflag = true;
+            vh.itemView.setBackgroundResource(R.color.mydefault);
+            emailtobookprev = emailtobook;
+            String id= mClinicToViewAdapter.getItem(position).getName();
+            Log.w("choiceScreenFragment", "ID "+id);
 
+        }
+        else
+        {
+            vh.itemView.setBackgroundResource(R.color.white);
+            emailtobookprev = "";
+            followflag = false;
+
+        }
+    }
     @Override
     public void onStart() {
         super.onStart();

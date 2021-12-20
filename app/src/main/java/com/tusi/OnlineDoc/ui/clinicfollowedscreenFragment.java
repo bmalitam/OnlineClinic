@@ -16,6 +16,7 @@
 package com.tusi.OnlineDoc.ui;
 
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -24,7 +25,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -47,6 +50,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.tusi.OnlineDoc.DataLists.ClinicToBookList;
+import com.tusi.OnlineDoc.MainActivity;
 import com.tusi.OnlineDoc.MyScrollToBottomObserver;
 import com.tusi.OnlineDoc.R;
 import com.tusi.OnlineDoc.databinding.ClinicFollowedScreenBinding;
@@ -56,6 +60,7 @@ import com.tusi.OnlineDoc.viewholder.usertype;
 import java.util.Calendar;
 
 
+
 public class clinicfollowedscreenFragment extends Fragment {
 
     private static final String TAG = "ClinicFollowed";
@@ -63,7 +68,15 @@ public class clinicfollowedscreenFragment extends Fragment {
     public static String MESSAGES_CHILD;
 
     public static final String ANONYMOUS = "anonymous";
-
+    String emailtobookprev = "";
+    String emailtobook = "";
+    static Calendar beginTime = Calendar.getInstance();
+    static Calendar endTime = Calendar.getInstance();
+    static int days;
+    static int years;
+    static int months;
+    static int hour;
+    static int minutes;
     private GoogleSignInClient mSignInClient;
     private ClinicFollowedScreenBinding mBinding;
     private LinearLayoutManager mLinearLayoutManager;
@@ -74,6 +87,7 @@ public class clinicfollowedscreenFragment extends Fragment {
     private static TextView chosentime;
     private FirebaseRecyclerAdapter<ClinicToBookList, viewScreenViewHolder> mPatientToViewAdapter;
     private static String[] userType_ = {ANONYMOUS};
+
     static usertype utpe;
     String usr;
 
@@ -120,9 +134,9 @@ public class clinicfollowedscreenFragment extends Fragment {
 
         chosendate = (TextView) view.findViewById(R.id.Chosendate);
         chosentime = (TextView) view.findViewById(R.id.ChosenTime);
-        UserNameView = (TextView) view.findViewById(R.id.usernameBookAppointmentScreen);
+//        UserNameView = (TextView) view.findViewById(R.id.usernameBookAppointmentScreen);
         UserTypeView = (TextView) view.findViewById(R.id.usertypeBookAppointmentScreen);
-        Intent intent = new Intent(Intent.ACTION_INSERT);
+//        Intent intent = new Intent(Intent.ACTION_INSERT);
 
         final String[] bookdate = new String[1];
         final String[] time = new String[1];
@@ -149,9 +163,9 @@ public class clinicfollowedscreenFragment extends Fragment {
                 mBinding.progressBarBookAppointmentScreen.setVisibility(ProgressBar.INVISIBLE);
                 Toast.makeText(getActivity(), "No Medical Issues Registered yet",
                         Toast.LENGTH_SHORT).show();
-                UserNameView.setText(getUserName());
+//                UserNameView.setText(getUserName());
                 UserTypeView.setText(getUserType());
-
+//
             }
 
         });
@@ -168,34 +182,96 @@ public class clinicfollowedscreenFragment extends Fragment {
             }
 
             @Override
-            protected void onBindViewHolder(viewScreenViewHolder vh, int position, ClinicToBookList message) {
+            protected void onBindViewHolder(viewScreenViewHolder vh, @SuppressLint("RecyclerView") int position, ClinicToBookList message) {
                 mBinding.progressBarBookAppointmentScreen.setVisibility(ProgressBar.INVISIBLE);
                 vh.bindMessage(message);
-                Bookingbutton.setOnClickListener(new View.OnClickListener(){
+                vh.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v)
-                    {
-
-                        if(true)
-                        {Toast.makeText(getActivity(), vh.getEmail(), Toast.LENGTH_SHORT).show();}
-                        else
-                        {Toast.makeText(getActivity(), vh.getEmail(), Toast.LENGTH_SHORT).show();
-                            intent.setData(CalendarContract.CONTENT_URI);
-                            intent.putExtra(CalendarContract.Events.TITLE, "Booking Clinic Session");
-                            intent.putExtra(CalendarContract.Events.DESCRIPTION, "Booking Clinic Session");
-                            intent.putExtra(CalendarContract.Events.DURATION, "PT1H");
-                            intent.putExtra(CalendarContract.Events.ALL_DAY, false);
-                            intent.putExtra(Intent.EXTRA_EMAIL,vh.getEmail());
-                        }
-
+                    public void onClick(View view) {
+                        clickaction(vh,mPatientToViewAdapter,position);
 
                     }
+
+
+
                 });
-                UserNameView.setText(getUserName());
-                UserTypeView.setText(getUserType());
+                vh.clinicName.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        clickaction(vh,mPatientToViewAdapter,position);
+                    }
+
+
+
+                });
+                vh.clinicContact.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        clickaction(vh,mPatientToViewAdapter,position);
+                    }
+
+
+
+                });
+                vh.clinicRegistrationNumber.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        clickaction(vh,mPatientToViewAdapter,position);
+                    }
+
+
+
+                });
+                vh.clinicLocation.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        clickaction(vh,mPatientToViewAdapter,position);
+                    }
+
+
+
+                });
+
+
+
+
+//                vh.onInterceptTouchEvent(new View.OnClickListener(){
+//                    @Override
+//                    public void onClick(View v)
+//                    {
+//
+//                        Toast.makeText(getActivity(), ""+vh.getAdapterPosition(), Toast.LENGTH_SHORT).show();
+//                        int pos = vh.getAdapterPosition();
+////                            Toast.makeText(getActivity(), , Toast.LENGTH_SHORT).show();
+
+//                    }
+//                });
+
+//                UserNameView.setText(getUserName());
+//                UserTypeView.setText(getUserType());
             }
 
+
         };
+        Bookingbutton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v)
+            {
+                Intent intent = new Intent(Intent.ACTION_EDIT);
+                intent.setType("vnd.android.cursor.item/event");
+                beginTime.set(years, months, days, hour, minutes);
+                Toast.makeText(getActivity(), emailtobook, Toast.LENGTH_SHORT).show();
+//                intent.setData(CalendarContract.CONTENT_URI);
+                intent.putExtra(CalendarContract.Events.TITLE, usr+" Booking Clinic Session");
+                intent.putExtra(CalendarContract.Events.DESCRIPTION, usr+" Booking Clinic Session");
+                intent.putExtra(CalendarContract.Events.DURATION, "PT1H");
+                intent.putExtra(CalendarContract.Events.ALL_DAY, false);
+                intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, beginTime.getTimeInMillis());
+                intent.putExtra(Intent.EXTRA_EMAIL,emailtobook);
+                startActivity(intent);
+
+            }
+        });
 
         datebutt.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -231,6 +307,25 @@ public class clinicfollowedscreenFragment extends Fragment {
 
     }
 
+    void clickaction(viewScreenViewHolder vh,FirebaseRecyclerAdapter<ClinicToBookList, viewScreenViewHolder> mPatientToViewAdapter,int position)
+    {
+        emailtobook = mPatientToViewAdapter.getItem(position).getEmail();
+
+        if (emailtobook!=emailtobookprev)
+        { vh.itemView.setBackgroundResource(R.color.mydefault);
+            emailtobookprev = emailtobook;
+            String id= mPatientToViewAdapter.getItem(position).getEmail();
+            Log.w("clinicfollowedscreenFragment", "ID "+id);
+            }
+        else
+        {
+            vh.itemView.setBackgroundResource(R.color.white);
+            emailtobookprev = "";
+
+        }
+    }
+
+
     public static class TimePickerFragment extends DialogFragment
             implements TimePickerDialog.OnTimeSetListener {
 
@@ -238,6 +333,9 @@ public class clinicfollowedscreenFragment extends Fragment {
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             // Do something with the time chosen by the user
             chosentime.setText("Time: "+hourOfDay+":"+minute);
+            hour = hourOfDay;
+            minutes = minute;
+//            Log.w("clinicfollowedscreenFragment", "Time: "+hourOfDay+":"+minute);
         }
 
         @Override
@@ -246,19 +344,25 @@ public class clinicfollowedscreenFragment extends Fragment {
             final Calendar c = Calendar.getInstance();
             int hour = c.get(Calendar.HOUR_OF_DAY);
             int minute = c.get(Calendar.MINUTE);
-
+//            Log.w("clinicfollowedscreenFragment", "Time: "+hour+":"+minute);
             // Create a new instance of TimePickerDialog and return it
-            return new TimePickerDialog(getActivity(), this, hour, minute,
+            return new TimePickerDialog(getActivity(),  R.style.MyTimePickerDialogTheme,this, hour, minute,
                     DateFormat.is24HourFormat(getActivity()));
-        }
+        }}
 
-    }
     public static class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
             // Do something with the date chosen by the user
             chosendate.setText("Date: "+day+"/"+month+"/"+year);
+            years = year;
+            months = month;
+            days = day;
+
+
+
+//            Log.w("clinicfollowedscreenFragment", "Date: "+day+"/"+month+"/"+year);
         }
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -269,7 +373,7 @@ public class clinicfollowedscreenFragment extends Fragment {
             int day = c.get(Calendar.DAY_OF_MONTH);
 
             // Create a new instance of DatePickerDialog and return it
-            return new DatePickerDialog(getActivity(), this, year, month, day);
+            return new DatePickerDialog(getActivity(), R.style.MyTimePickerDialogTheme,this, year, month, day);
         }
 
     }

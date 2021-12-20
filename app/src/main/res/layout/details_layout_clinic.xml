@@ -172,7 +172,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:minHeight="48dp"
-        android:text="UserType"
+        android:text="Left is patient Right is Clinic"
         app:layout_constraintBottom_toTopOf="@+id/Send_details"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.473"

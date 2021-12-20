@@ -1,8 +1,10 @@
 package com.tusi.OnlineDoc.viewholder;
 
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tusi.OnlineDoc.DataLists.ClinicToBookList;
@@ -11,14 +13,14 @@ import com.tusi.OnlineDoc.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class viewScreenViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+public class viewScreenViewHolder extends RecyclerView.ViewHolder {
 
     private static final String TAG = "clinicDetailsViewHolder";
 
-    TextView clinicName;
-    TextView clinicContact;
-    TextView clinicRegistrationNumber;
-    TextView clinicLocation;
+    public TextView clinicName;
+    public TextView clinicContact;
+    public TextView clinicRegistrationNumber;
+    public TextView clinicLocation;
     List<View> itemViewList = new ArrayList<>();
     String emailtobook;
     String emailtobookprev;
@@ -32,12 +34,12 @@ public class viewScreenViewHolder extends RecyclerView.ViewHolder implements Vie
         clinicContact = (TextView) itemView.findViewById(R.id.EmailClinicDetailPatientView);
         clinicRegistrationNumber = (TextView) itemView.findViewById(R.id.RegNumClinicDetailPatientView);
         clinicLocation = (TextView) itemView.findViewById(R.id.LocationClinicDetailPatientView);
-        clinicName.setOnClickListener(this);
-        itemView.setOnClickListener(this);
-        clinicContact.setOnClickListener(this);
-        clinicRegistrationNumber.setOnClickListener(this);
-        clinicLocation.setOnClickListener(this);
-        itemViewList.add(itemView);
+//        clinicName.setOnClickListener(this);
+//        itemView.setOnClickListener(this);
+//        clinicContact.setOnClickListener(this);
+//        clinicRegistrationNumber.setOnClickListener(this);
+//        clinicLocation.setOnClickListener(this);
+//        itemViewList.add(itemView);
 
     }
 
@@ -58,28 +60,27 @@ public class viewScreenViewHolder extends RecyclerView.ViewHolder implements Vie
     }
 
 
-    @Override
-    public void onClick(View view) {
+//    @Override
+//    public void onClick(View view) {
+//
+//        emailtobook = clinicContact.getText().toString();
+//
+//        if (emailtobook!=emailtobookprev)
+//        { itemView.setBackgroundResource(R.color.mydefault);
+//            emailtobookprev = emailtobook;
+//            }
+//        else
+//        {
+//            itemView.setBackgroundResource(R.color.white);
+//            emailtobookprev = "";
+//
+//        }
+//
+//
+//
+//    }
 
-        emailtobook = clinicContact.getText().toString();
-
-        if (emailtobook!=emailtobookprev)
-        { itemView.setBackgroundResource(R.color.mydefault);
-            emailtobookprev = emailtobook;
-            }
-        else
-        {
-            itemView.setBackgroundResource(R.color.white);
-            emailtobookprev = "";
-
-        }
 
 
 
-    }
-
-        public String getEmail()
-        {
-            return emailtobookprev;
-        }
 }

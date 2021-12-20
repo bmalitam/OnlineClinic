@@ -12,22 +12,15 @@ import com.tusi.OnlineDoc.R;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class choiceScreenViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+public class choiceScreenViewHolder extends RecyclerView.ViewHolder{
 
     private static final String TAG = "clinicListForPatientViewHolder";
 
-    TextView clinicNameFollowed;
-    TextView clinicContactFollowed;
-    TextView clinicRegistrationNumberFollowed;
-    TextView clinicLocationFollowed;
-    String emailtobook;
-    String emailtobookprev;
-    String nametobook;
-    String nametobookprev;
-    String regtobook;
-    String regtobookprev;
-    String loctobook;
-    String loctobookprev;
+    public TextView clinicNameFollowed;
+    public TextView clinicContactFollowed;
+    public TextView clinicRegistrationNumberFollowed;
+    public TextView clinicLocationFollowed;
+
     int pos;
     int posprev;
 
@@ -38,11 +31,11 @@ public class choiceScreenViewHolder extends RecyclerView.ViewHolder implements V
         clinicRegistrationNumberFollowed = (TextView) itemView.findViewById(R.id.RegNumClinicDetailPatientView);
         clinicLocationFollowed = (TextView) itemView.findViewById(R.id.LocationClinicDetailPatientView);
 
-        clinicNameFollowed.setOnClickListener(this);
-        itemView.setOnClickListener(this);
-        clinicContactFollowed.setOnClickListener(this);
-        clinicRegistrationNumberFollowed.setOnClickListener(this);
-        clinicLocationFollowed.setOnClickListener(this);
+//        clinicNameFollowed.setOnClickListener(this);
+//        itemView.setOnClickListener(this);
+//        clinicContactFollowed.setOnClickListener(this);
+//        clinicRegistrationNumberFollowed.setOnClickListener(this);
+//        clinicLocationFollowed.setOnClickListener(this);
     }
 
     public void bindMessage(ClinicFollowedList clinicfollowedlist) {
@@ -60,51 +53,6 @@ public class choiceScreenViewHolder extends RecyclerView.ViewHolder implements V
         }
     }
 
-    @Override
-    public void onClick(View view) {
 
 
-        emailtobook = clinicContactFollowed.getText().toString();
-        nametobook = clinicNameFollowed.getText().toString();
-        regtobook = clinicRegistrationNumberFollowed.getText().toString();
-        loctobook = clinicLocationFollowed.getText().toString();
-        pos = getLayoutPosition();
-
-        if (emailtobook!=emailtobookprev)
-        { itemView.setBackgroundResource(R.color.mydefault);
-            emailtobookprev = emailtobook;
-            nametobookprev = nametobook;
-            regtobookprev = regtobook;
-            loctobookprev = loctobook;
-            posprev = pos;
-        }
-        else
-        {
-            itemView.setBackgroundResource(R.color.white);
-            emailtobookprev = "";
-            nametobookprev = "";
-            regtobookprev = "";
-            loctobookprev = "";
-            posprev = (Integer) null;
-
-        }
-
-    }
-    public String getEmail()
-    {
-        return emailtobookprev;
-    }
-    public String getName()
-    {
-        return nametobookprev;
-    }
-    public String getReg()
-    {
-        return regtobookprev;
-    }
-    public String getLoc()
-    {
-        return loctobookprev;
-    }
-    public int getPos(){return  posprev;}
 }

@@ -15,8 +15,8 @@ public class viewClinicScreenViewHolder extends RecyclerView.ViewHolder implemen
 
     private static final String TAG = "patientDetailsViewHolder";
 
-    TextView patientName;
-    TextView patientContact;
+    public TextView patientName;
+    public TextView patientContact;
 
     public viewClinicScreenViewHolder(View v) {
         super(v);

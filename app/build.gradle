@@ -3,6 +3,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        Release {
+            storeFile file('C:\\Repo\\OnlineClinic\\onlineClinickeystore.jks')
+            storePassword 'docpass123'
+            keyAlias 'key0'
+            keyPassword 'docpass123'
+        }
+    }
     compileSdkVersion 30
     buildToolsVersion "30.0.0"
 

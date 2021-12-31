@@ -25,5 +25,6 @@
         <activity android:name=".ui.ViewScreen" />
         <activity android:name=".ui.ChoiceScreen" />
         <activity android:name=".ChooseUserTypeActivity" />
+        <activity android:name=".ui.addNewMedicalCondition" />
     </application>
 </manifest>

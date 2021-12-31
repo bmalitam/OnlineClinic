@@ -17,6 +17,7 @@ package com.tusi.OnlineDoc.ui;
 
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -42,14 +43,17 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.tusi.OnlineDoc.ApplicationVariable;
+import com.tusi.OnlineDoc.ChooseUserTypeActivity;
 import com.tusi.OnlineDoc.DataLists.ClinicFollowedList;
 import com.tusi.OnlineDoc.DataLists.PatientFollowingList;
 import com.tusi.OnlineDoc.DataLists.PatientMedicalHistoryList;
 import com.tusi.OnlineDoc.MyScrollToBottomObserver;
 import com.tusi.OnlineDoc.R;
+import com.tusi.OnlineDoc.SignInActivity;
 import com.tusi.OnlineDoc.databinding.ViewScreenBinding;
 import com.tusi.OnlineDoc.viewholder.*;
 import com.tusi.OnlineDoc.viewholder.usertype;
+import com.tusi.OnlineDoc.ui.username;
 
 
 public class viewscreenFragment extends Fragment {
@@ -68,7 +72,7 @@ public class viewscreenFragment extends Fragment {
     boolean followflag = false;
     private ViewScreenBinding mBinding;
     private LinearLayoutManager mLinearLayoutManager;
-    private SharedPreferences mSharedPreferences;
+
     private FirebaseAuth mFirebaseAuth;
     private FirebaseDatabase mDatabase;
     private FirebaseRecyclerAdapter<PatientFollowingList, viewClinicScreenViewHolder> mClinicToViewAdapter;
@@ -76,6 +80,7 @@ public class viewscreenFragment extends Fragment {
     private static String[] userType_ = {ANONYMOUS};
     static usertype utpe;
     String usr;
+
 
     public static viewscreenFragment newInstance(int page, String title,usertype userType) {
         viewscreenFragment fragment = new viewscreenFragment();
@@ -94,7 +99,6 @@ public class viewscreenFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
 
-        mFirebaseAuth = FirebaseAuth.getInstance();
         View view = mBinding.getRoot();
         return view;
     }
@@ -104,28 +108,16 @@ public class viewscreenFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // This codelab uses View Binding
-        // See: https://developer.android.com/topic/libraries/view-binding
 
         TextView UserTypeView;
         TextView UserNameView;
         UserNameView = (TextView) view.findViewById(R.id.usernameViewScreen);
         UserTypeView = (TextView) view.findViewById(R.id.usertypeViewScreen);
         usr = getUserName();
-//        mDatabase.getReference().child("Database").child("usrtype").child(usr).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DataSnapshot> task) {
-//                if (!task.isSuccessful()) {
-//                    //Todo: popup
-//                }
-//                else {
-//                    userType_[0] = String.valueOf(task.getResult().getValue());
-//                }
-//            }
-//        });
+
         if (utpe.getUser().contains("patient"))
         {
-            MESSAGES_CHILD = "Database/"+usr+"/Details/"+"medical_history";
+            MESSAGES_CHILD = "Database/"+usr+"/Details/"+"medicalHistory";
 
         }
         else if (utpe.getUser().contains("clinic"))
@@ -134,7 +126,7 @@ public class viewscreenFragment extends Fragment {
         }
         else
         {
-            MESSAGES_CHILD = "Database/"+usr+"/Details/"+"medical_history";
+            MESSAGES_CHILD = "Database/"+usr+"/Details/"+"medicalHistory";
         }
 
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -189,8 +181,7 @@ public class viewscreenFragment extends Fragment {
             mBinding.messageRecyclerViewViewScreen.setLayoutManager(mLinearLayoutManager);
             mBinding.messageRecyclerViewViewScreen.setAdapter(mPatientToViewAdapter);
 
-            // Scroll down when a new message arrives
-            // See MyScrollToBottomObserver.java for details
+
             mPatientToViewAdapter.registerAdapterDataObserver(
                     new MyScrollToBottomObserver(mBinding.messageRecyclerViewViewScreen, mPatientToViewAdapter, mLinearLayoutManager));
 
@@ -233,27 +224,18 @@ public class viewscreenFragment extends Fragment {
                             clickaction(vh,mClinicToViewAdapter,position);
 
                         }
-
-
-
                     });
                     vh.patientName.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             clickaction(vh,mClinicToViewAdapter,position);
                         }
-
-
-
                     });
                     vh.patientContact.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             clickaction(vh,mClinicToViewAdapter,position);
                         }
-
-
-
                     });
 
                 }
@@ -263,8 +245,7 @@ public class viewscreenFragment extends Fragment {
             mBinding.messageRecyclerViewViewScreen.setLayoutManager(mLinearLayoutManager);
             mBinding.messageRecyclerViewViewScreen.setAdapter(mClinicToViewAdapter);
 
-            // Scroll down when a new message arrives
-            // See MyScrollToBottomObserver.java for details
+
             mClinicToViewAdapter.registerAdapterDataObserver(
                     new MyScrollToBottomObserver(mBinding.messageRecyclerViewViewScreen, mClinicToViewAdapter, mLinearLayoutManager));
         }
@@ -317,22 +298,24 @@ public class viewscreenFragment extends Fragment {
 
     void clickaction(viewClinicScreenViewHolder vh, FirebaseRecyclerAdapter<PatientFollowingList, viewClinicScreenViewHolder> mClinicToViewAdapter, int position)
     {
-        emailtobook = mClinicToViewAdapter.getItem(position).getContact();
-        if (emailtobook!=emailtobookprev)
-        {   followflag = true;
-            vh.itemView.setBackgroundResource(R.color.mydefault);
-            emailtobookprev = emailtobook;
-            String id= mClinicToViewAdapter.getItem(position).getName();
-            Log.w("choiceScreenFragment", "ID "+id);
+        emailtobook = mClinicToViewAdapter.getItem(position).getName();
 
-        }
-        else
-        {
-            vh.itemView.setBackgroundResource(R.color.white);
-            emailtobookprev = "";
-            followflag = false;
-
-        }
+//        if (emailtobook!=emailtobookprev)
+//        {   followflag = true;
+//            vh.itemView.setBackgroundResource(R.color.mydefault);
+//            emailtobookprev = emailtobook;
+//            String id= mClinicToViewAdapter.getItem(position).getName();
+//            Log.w("choiceScreenFragment", "ID "+id);
+//
+//        }
+//        else
+//        {
+//            vh.itemView.setBackgroundResource(R.color.white);
+//            emailtobookprev = "";
+//            followflag = false;
+//
+//        }
+        startActivity(new Intent(getContext(), addNewMedicalCondition.class));
     }
     @Override
     public void onStart() {

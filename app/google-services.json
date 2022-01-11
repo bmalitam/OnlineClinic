@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "158184154228-m00ncg06me6t3v5q82k5idqsm2elck3l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tusi.OnlineDoc",
+            "certificate_hash": "a4cec6d38315189d93b20f94e6b2a82780aa2fa1"
+          }
+        },
+        {
           "client_id": "158184154228-ve9vhqhuekhn6c8ebh20vv5kcpfc6kgv.apps.googleusercontent.com",
           "client_type": 3
         }

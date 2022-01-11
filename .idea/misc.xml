@@ -1,6 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/layout/activity_main.xml" value="0.18645833333333334" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/layout/activity_sign_in.xml" value="0.14628623188405798" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/layout/choice_screen.xml" value="0.20260416666666667" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/layout/choose_user_type.xml" value="0.16666666666666666" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/layout/clinic_detail_view.xml" value="0.14628623188405798" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/layout/clinic_followed_screen.xml" value="0.3625" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/layout/clinics_view_of_patients_following_them.xml" value="0.11277173913043478" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/layout/details_layout.xml" value="0.16666666666666666" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/layout/details_layout_clinic.xml" value="0.16666666666666666" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/layout/editable.xml" value="0.19114583333333332" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/layout/editable_medichist_screen.xml" value="0.25" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/layout/item_message.xml" value="0.3625" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/layout/item_message_clinicdetails.xml" value="0.14583333333333334" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/layout/item_message_clinicdetails_patientview.xml" value="0.14564336372847012" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/layout/item_message_clinicview.xml" value="0.18645833333333334" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/layout/item_message_patientdetails.xml" value="0.16530797101449277" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/layout/item_message_patientdetails_clinicview.xml" value="0.11277173913043478" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/layout/item_message_patientmedicalhistory.xml" value="0.14628623188405798" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/layout/main_screen.xml" value="0.16893115942028986" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/layout/patientmedicalhistory.xml" value="0.19114583333333332" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/layout/patients_detail_view.xml" value="0.2869791666666667" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/layout/patients_medical_history.xml" value="0.2869791666666667" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/layout/patients_view_of_clinic_they_follow.xml" value="0.18645833333333334" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/layout/view_screen.xml" value="0.14628623188405798" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/layout/wait_layout.xml" value="0.18697916666666667" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/menu/main_menu.xml" value="0.1703125" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/menu/patient_Medical_List_menu.xml" value="0.1703125" />
+        <entry key="..\:/Repo/OnlineClinic/app/src/main/res/menu/patient_medical_list_menu.xml" value="0.13645833333333332" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

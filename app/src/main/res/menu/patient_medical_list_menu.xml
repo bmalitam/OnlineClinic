@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/medicalhistory"
+        android:title="Medical Issue: Fever"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/datehistory"
+        android:title="Date: 20th December 2019"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/clinichistory"
+        android:title="Clinic: Clinic Suha"
+        app:showAsAction="never"/>
+</menu>

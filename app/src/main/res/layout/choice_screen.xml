@@ -28,10 +28,10 @@
                 android:id="@+id/usertypeChoiceScreen"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/cardview_dark_background"
                 android:gravity="center"
                 android:text="TextView"
                 android:textColor="@android:color/background_light"
-                android:background="@color/cardview_dark_background"
                 android:textSize="24sp" />
         </LinearLayout>
 
@@ -39,8 +39,8 @@
             android:id="@+id/usertypecontainerChoiceScreen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@color/cardview_dark_background">
+            android:background="@color/cardview_dark_background"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/UsernameFixedtextChoiceScreen"
@@ -48,8 +48,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.9"
                 android:fontFamily="sans-serif-black"
-                android:text="User Name:"
                 android:paddingLeft="10dp"
+                android:text="User Name:"
                 android:textColor="@android:color/background_light"
                 android:textSize="30sp" />
 
@@ -63,10 +63,15 @@
                 android:textSize="24sp" />
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/messageRecyclerViewChoiceScreen"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/messageRecyclerViewChoiceScreen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </ScrollView>
 
     </LinearLayout>
 
@@ -93,7 +98,6 @@
             android:layout_height="match_parent"
             android:layout_gravity="bottom"
             android:backgroundTint="@color/colorAccent"
-            android:enabled="false"
             android:text="FOLLOW"
             android:textSize="36sp" />
     </LinearLayout>

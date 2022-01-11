@@ -1,5 +1,6 @@
 package com.tusi.OnlineDoc.viewholder;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,15 +12,17 @@ import com.tusi.OnlineDoc.R;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class choiceScreenViewHolder extends RecyclerView.ViewHolder {
+public class choiceScreenViewHolder extends RecyclerView.ViewHolder{
 
     private static final String TAG = "clinicListForPatientViewHolder";
 
-    TextView clinicNameFollowed;
-    TextView clinicContactFollowed;
-    TextView clinicRegistrationNumberFollowed;
-    TextView clinicLocationFollowed;
+    public TextView clinicNameFollowed;
+    public TextView clinicContactFollowed;
+    public TextView clinicRegistrationNumberFollowed;
+    public TextView clinicLocationFollowed;
 
+    int pos;
+    int posprev;
 
     public choiceScreenViewHolder(View v) {
         super(v);
@@ -28,7 +31,11 @@ public class choiceScreenViewHolder extends RecyclerView.ViewHolder {
         clinicRegistrationNumberFollowed = (TextView) itemView.findViewById(R.id.RegNumClinicDetailPatientView);
         clinicLocationFollowed = (TextView) itemView.findViewById(R.id.LocationClinicDetailPatientView);
 
-
+//        clinicNameFollowed.setOnClickListener(this);
+//        itemView.setOnClickListener(this);
+//        clinicContactFollowed.setOnClickListener(this);
+//        clinicRegistrationNumberFollowed.setOnClickListener(this);
+//        clinicLocationFollowed.setOnClickListener(this);
     }
 
     public void bindMessage(ClinicFollowedList clinicfollowedlist) {
@@ -45,4 +52,7 @@ public class choiceScreenViewHolder extends RecyclerView.ViewHolder {
 
         }
     }
+
+
+
 }

@@ -58,16 +58,14 @@ public class SignInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
 
-
+//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         // This codelab uses View Binding
         // See: https://developer.android.com/topic/libraries/view-binding
         mBinding = ActivitySignInBinding.inflate(getLayoutInflater());
-        usertypeswitch = (Switch) mBinding.usertypeswitch;
+//        usertypeswitch = (Switch) mBinding.usertypeswitch;
 
 
-//        Intent intent = new Intent(getBaseContext(), SignInActivity.class);
-//        intent.putExtra("USER_TYPE", userTypevar);
-//        startActivity(intent);
+//        String name = user.getDisplayName();
 
         setContentView(mBinding.getRoot());
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -94,25 +92,34 @@ public class SignInActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        String userTypevar = new setUserType().checkUserTypeSwitch(usertypeswitch);
-        ((ApplicationVariable) this.getApplication()).setUserTypeVariable(userTypevar);
+////This is where the user type is set during sign on
+//        String userTypevar = new setUserType().checkUserTypeSwitch(usertypeswitch);
+//        ((ApplicationVariable) this.getApplication()).setUserTypeVariable(userTypevar);
+
         // Result returned from launching the Intent in signIn()
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
+
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e);
             }
         }
+
+
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+
+
+
+
         mFirebaseAuth.signInWithCredential(credential)
                 .addOnSuccessListener(this, new OnSuccessListener<AuthResult>() {
                     @Override
@@ -120,7 +127,8 @@ public class SignInActivity extends AppCompatActivity {
                         // If sign in succeeds the auth state listener will be notified and logic to
                         // handle the signed in user can be handled in the listener.
                         Log.d(TAG, "signInWithCredential:success");
-                        startActivity(new Intent(SignInActivity.this, MainActivity.class));
+                        startActivity(new Intent(SignInActivity.this, ChooseUserTypeActivity.class));
+
                         finish();
                     }
                 })

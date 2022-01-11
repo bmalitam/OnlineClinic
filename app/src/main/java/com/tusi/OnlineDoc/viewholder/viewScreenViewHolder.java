@@ -1,22 +1,31 @@
 package com.tusi.OnlineDoc.viewholder;
 
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.tusi.OnlineDoc.DataLists.ClinicDetailsList;
-import com.tusi.OnlineDoc.DataLists.ClinicFollowedList;
+import com.tusi.OnlineDoc.DataLists.ClinicToBookList;
 import com.tusi.OnlineDoc.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class viewScreenViewHolder extends RecyclerView.ViewHolder {
 
     private static final String TAG = "clinicDetailsViewHolder";
 
-    TextView clinicName;
-    TextView clinicContact;
-    TextView clinicRegistrationNumber;
-    TextView clinicLocation;
+    public TextView clinicName;
+    public TextView clinicContact;
+    public TextView clinicRegistrationNumber;
+    public TextView clinicLocation;
+    List<View> itemViewList = new ArrayList<>();
+    String emailtobook;
+    String emailtobookprev;
+
+
 
 
     public viewScreenViewHolder(View v) {
@@ -25,10 +34,16 @@ public class viewScreenViewHolder extends RecyclerView.ViewHolder {
         clinicContact = (TextView) itemView.findViewById(R.id.EmailClinicDetailPatientView);
         clinicRegistrationNumber = (TextView) itemView.findViewById(R.id.RegNumClinicDetailPatientView);
         clinicLocation = (TextView) itemView.findViewById(R.id.LocationClinicDetailPatientView);
+//        clinicName.setOnClickListener(this);
+//        itemView.setOnClickListener(this);
+//        clinicContact.setOnClickListener(this);
+//        clinicRegistrationNumber.setOnClickListener(this);
+//        clinicLocation.setOnClickListener(this);
+//        itemViewList.add(itemView);
 
     }
 
-    public void bindMessage(ClinicFollowedList clinicfollowedlist) {
+    public void bindMessage(ClinicToBookList clinicfollowedlist) {
         if (clinicfollowedlist.getName() != null) {
             clinicName.setText(clinicfollowedlist.getName());
             clinicContact.setText(clinicfollowedlist.getEmail());
@@ -43,4 +58,29 @@ public class viewScreenViewHolder extends RecyclerView.ViewHolder {
         }
 
     }
+
+
+//    @Override
+//    public void onClick(View view) {
+//
+//        emailtobook = clinicContact.getText().toString();
+//
+//        if (emailtobook!=emailtobookprev)
+//        { itemView.setBackgroundResource(R.color.mydefault);
+//            emailtobookprev = emailtobook;
+//            }
+//        else
+//        {
+//            itemView.setBackgroundResource(R.color.white);
+//            emailtobookprev = "";
+//
+//        }
+//
+//
+//
+//    }
+
+
+
+
 }

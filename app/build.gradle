@@ -3,12 +3,20 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        Release {
+            storeFile file('C:\\Repo\\OnlineClinic\\onlineClinickeystore.jks')
+            storePassword 'docpass123'
+            keyAlias 'key0'
+            keyPassword 'docpass123'
+        }
+    }
     compileSdkVersion 30
     buildToolsVersion "30.0.0"
 
     defaultConfig {
         applicationId "com.tusi.OnlineDoc"
-        minSdkVersion 26
+        minSdkVersion 25
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
